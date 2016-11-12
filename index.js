@@ -1,7 +1,11 @@
+/* Require Modules from NPM and default Node installation */
 const fs = require('fs');
 const http = require('http');
+
+/* Require own modules */
 const fbAuth = require('./services/server_authentication.js');
 
+/* Define constant values */
 const hostname = '127.0.0.1';
 const port = '8129';
 
