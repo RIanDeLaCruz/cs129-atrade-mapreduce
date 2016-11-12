@@ -1,5 +1,7 @@
 const fs = require('fs');
 const http = require('http');
+const fbAuth = require('./services/server_authentication.js');
+
 const hostname = '127.0.0.1';
 const port = '8129';
 
@@ -14,5 +16,10 @@ const server = http.createServer(function serverCallback (req, res) {
 });
 
 server.listen(port, hostname, function listenCallback() {
+  var token = '';
+  fbAuth().then(res => {
+    let res_split = res.toString().split('=');
+    token = res_split[1]
+  })
   console.log(`Server running on port: ${hostname}:${port}`);
 })
