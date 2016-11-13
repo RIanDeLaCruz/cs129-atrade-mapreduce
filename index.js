@@ -8,6 +8,7 @@ const url = require('url');
 const fbAuth = require('./services/server_authentication.js');
 const fbGraph = require('./services/facebook_query.js');
 const getGroup = fbGraph.getGroup;
+const getFeed = fbGraph.getGroupFeed;
 
 /* Define constant values */
 const hostname = '127.0.0.1';
@@ -16,6 +17,7 @@ const port = '8129';
 const server = http.createServer(function serverCallback (req, res) {
   console.log(url.parse(req.url).pathname)
   var path = url.parse(req.url).pathname;
+  console.log(path.indexOf('group'))
   if(path === '/') {
       fs.readFile('index.html', function serveFile(error, content) {
         if(!error) {
@@ -24,8 +26,9 @@ const server = http.createServer(function serverCallback (req, res) {
           res.end(content, 'utf-8');
         }
       });
-  } else if(path.indexOf('group' > 0)) {
-    let groupResponse = '';
+  }
+  if(path.indexOf('group') > 0) {
+    var groupResponse = '';
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     var groupId = path.split('/')[2]
@@ -37,10 +40,20 @@ const server = http.createServer(function serverCallback (req, res) {
     .catch(err => {
       console.log(err)
     });
-  } else {
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'plain/text');
-      res.end('HELLO WORLD')
+  }
+  if(path.indexOf('feed') > 0) {
+    var groupResponse = '';
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    var groupId = path.split('/')[2]
+    getFeed(groupId)
+    .then(response => {
+      groupResponse = response.toString()
+      res.end(groupResponse);
+    })
+    .catch(err => {
+      console.log(err)
+    });
   }
 });
 

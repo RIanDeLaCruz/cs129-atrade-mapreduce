@@ -4,6 +4,11 @@ const https = require('https');
 const fbAuth = require('./server_authentication.js');
 const variables = require('../keys.json');
 
+_getTokenFromResponse = function(response) {
+  let res_split = response.toString().split('=');
+  return res_split[1];
+}
+
 _generateToken = function() {
   return fbAuth();
 }
@@ -12,8 +17,7 @@ getGroup = function(id) {
   var token = '';
   return _generateToken()
   .then(response => {
-    let res_split = response.toString().split('=');
-    token = res_split[1];
+    token = _getTokenFromResponse(response);
 
     let getUrl = `${variables.hostname}/${id}?access_token=${token}`
 
@@ -21,10 +25,10 @@ getGroup = function(id) {
       https.get(getUrl, function(res) {
         res.on('data', (d) => {
           resolve(d.toString());
-        })
+        });
       }).on('error', (err) => {
         reject(err);
-      })
+      });
     })
   })
   .catch(error => {
@@ -32,9 +36,27 @@ getGroup = function(id) {
   });
 }
 
-getGroupFeed = function(token, id) {
+getGroupFeed = function(id) {
+  var token = '';
+  return _generateToken()
+  .then(response => {
+    token = _getTokenFromResponse(response);
+
+    let getUrl = `${variables.hostname}/${id}/feed?access_token=${token}`
+
+    return new Promise(function(resolve, reject) {
+      https.get(getUrl, function(res) {
+        res.on('data', (d) => {
+          resolve(d.toString());
+        });
+      }).on('error', (err) => {
+        reject(err);
+      });
+    })
+  })
 }
 
 module.exports = {
-  getGroup: getGroup
+  getGroup: getGroup,
+  getGroupFeed: getGroupFeed
 }
