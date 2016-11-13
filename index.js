@@ -15,9 +15,7 @@ const hostname = '127.0.0.1';
 const port = '8129';
 
 const server = http.createServer(function serverCallback (req, res) {
-  console.log(url.parse(req.url).pathname)
   var path = url.parse(req.url).pathname;
-  console.log(path.indexOf('group'))
   if(path === '/') {
       fs.readFile('index.html', function serveFile(error, content) {
         if(!error) {
