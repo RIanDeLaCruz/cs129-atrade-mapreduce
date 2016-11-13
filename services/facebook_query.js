@@ -43,15 +43,20 @@ getGroupFeed = function(id) {
     token = _getTokenFromResponse(response);
 
     let getUrl = `${variables.hostname}/${id}/feed?access_token=${token}`
+    let buffer = '';
 
     return new Promise(function(resolve, reject) {
       https.get(getUrl, function(res) {
         res.on('data', (d) => {
-          resolve(d.toString());
+          buffer += d;
         });
-      }).on('error', (err) => {
-        reject(err);
-      });
+        res.on('end', () => {
+          resolve(buffer)
+        })
+        res.on('error', (err) => {
+          reject(err);
+        });
+      })
     })
   })
 }
