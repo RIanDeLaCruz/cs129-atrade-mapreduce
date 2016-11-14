@@ -15,6 +15,7 @@ const hostname = '127.0.0.1';
 const port = '8129';
 
 const server = http.createServer(function serverCallback (req, res) {
+  var uri = url.parse(req.url);
   var path = url.parse(req.url).pathname;
   if(path === '/') {
       fs.readFile('index.html', function serveFile(error, content) {
@@ -44,7 +45,7 @@ const server = http.createServer(function serverCallback (req, res) {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     var groupId = path.split('/')[2]
-    getFeed(groupId)
+    getFeed(groupId, uri.query)
     .then(response => {
       groupResponse = response.toString()
       res.end(groupResponse);
