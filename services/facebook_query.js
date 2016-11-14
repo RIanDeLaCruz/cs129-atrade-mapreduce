@@ -36,14 +36,22 @@ getGroup = function(id) {
   });
 }
 
-getGroupFeed = function(id) {
+/* Fields are comma-separated and the different parameters are separated by & */
+
+getGroupFeed = function(id, query = null) {
   var token = '';
   return _generateToken()
   .then(response => {
     token = _getTokenFromResponse(response);
 
-    let getUrl = `${variables.hostname}/${id}/feed?access_token=${token}`
+    let getUrl = `${variables.hostname}/${id}/feed?`;
     let buffer = '';
+    if(query != null) {
+      getUrl+=`${query}&access_token=${token}`;
+    } else {
+      getUrl+=`access_token=${token}`;
+    }
+    console.log(getUrl)
 
     return new Promise(function(resolve, reject) {
       https.get(getUrl, function(res) {
