@@ -13,6 +13,8 @@ _generateToken = function() {
   return fbAuth();
 }
 
+/* Fields returned are comma-separated while paramaters are delimited by & */
+
 getGroup = function(id) {
   var token = '';
   return _generateToken()
