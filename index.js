@@ -9,6 +9,7 @@ const fbAuth = require('./services/server_authentication.js');
 const fbGraph = require('./services/facebook_query.js');
 const getGroup = fbGraph.getGroup;
 const getFeed = fbGraph.getGroupFeed;
+const getReactions = fbGraph.getReactions;
 
 /* Define constant values */
 const hostname = '127.0.0.1';
@@ -26,7 +27,7 @@ const server = http.createServer(function serverCallback (req, res) {
         }
       });
   }
-  if(path.indexOf('group') > 0) {
+  if(path.indexOf('object') > 0) {
     var groupResponse = '';
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
@@ -53,6 +54,20 @@ const server = http.createServer(function serverCallback (req, res) {
     .catch(err => {
       console.log(err)
     });
+  }
+  if(path.indexOf('reactions') > 0) {
+    var reactionResponse = '';
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    var groupId = path.split('/')[2];
+    getReactions(groupId, uri.query)
+    .then(response => {
+      reactionResponse = response.toString();
+      res.end(reactionResponse);
+    })
+    .catch(err => {
+      console.log(err);
+    })
   }
 });
 
