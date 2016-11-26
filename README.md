@@ -9,10 +9,9 @@ To run the server: use the `npm start` command.
 ## Querying
 
 The server currently has 2 endpoints available:
-- `/group/{group-id}`: Used to get the details of the group
-- `/feed/{group-id}`: Used to get the feed of the group
-
-* The group endpoint can also be used for pages.
+- `/object/{object-id}`: Used to get the details of pages/groups
+- `/feed/{object-id}`: Used to get the feed of the pages/groups
+- `/reactions/{post-id}`: Used to get the reactions for a post
 
 To get the feed of a Facebook Group or Page, send a GET request to
 the `/feed/{group or page-id}` endpoint
