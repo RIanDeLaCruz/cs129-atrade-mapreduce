@@ -15,6 +15,37 @@ const getReactions = fbGraph.getReactions;
 const hostname = '127.0.0.1';
 const port = '8129';
 
+var feedRes = '';
+
+const _promiseAccumulator = function(promises, ids) {
+  let returnObj = {};
+  var ready = Promise.resolve(null);
+
+  promises.forEach(function _promiseIteration(promise, index) {
+    ready = ready.then(function _readyCallback() {
+      return promise;
+    })
+    .then(value => {
+      console.log(value)
+      returnObj[`${ids[index]}`] = JSON.parse(value);
+    })
+  })
+  return ready.then(() => { return returnObj; });
+}
+
+const _mapDataToReaction = function(data) {
+  let promiseArr = []
+  let idsArr = []
+  data.map(function(curr, index, arr) {
+    promiseArr.push(getReactions(curr.id))
+    idsArr.push(curr.id)
+  })
+  return {
+    promiseArr: promiseArr,
+    idsArr: idsArr
+  }
+}
+
 const server = http.createServer(function serverCallback (req, res) {
   var uri = url.parse(req.url);
   var path = url.parse(req.url).pathname;
@@ -68,6 +99,25 @@ const server = http.createServer(function serverCallback (req, res) {
     .catch(err => {
       console.log(err);
     })
+  }
+  if(path.indexOf('meta') > 0 ) {
+    let feedResponse = '';
+    let feedData = '';
+    let groupId = path.split('/')[2];
+    getFeed(groupId, uri.query)
+    .then(response => {
+      feedResponse = response.toString();
+      feedData = JSON.parse(feedResponse).data
+      promiseData = _mapDataToReaction(feedData)
+      _promiseAccumulator(promiseData.promiseArr, promiseData.idsArr)
+      .then(value => {
+        console.log(value)
+        res.end(JSON.stringify(value))
+      })
+    })
+    .catch(err => {
+      console.log(err)
+    });
   }
 });
 
