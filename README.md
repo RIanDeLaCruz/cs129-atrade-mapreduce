@@ -12,6 +12,7 @@ The server currently has 2 endpoints available:
 - `/object/{object-id}`: Used to get the details of pages/groups
 - `/feed/{object-id}`: Used to get the feed of the pages/groups
 - `/reactions/{post-id}`: Used to get the reactions for a post
+- `/meta/{post-id}`: Get feed with associated reactions for each post in the feed
 
 To get the feed of a Facebook Group or Page, send a GET request to
 the `/feed/{group or page-id}` endpoint
