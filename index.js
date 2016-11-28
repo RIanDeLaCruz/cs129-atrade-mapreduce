@@ -31,7 +31,8 @@ const _promiseAccumulator = function(promises, ids) {
     .then(value => {
       console.log(value)
       var individualObj = {};
-      individualObj[`${ids[index]}`] = JSON.parse(value);
+      individualObj['post_id'] = `${ids[index]}`;
+      individualObj['data'] = JSON.parse(value).data;
       returnObj.push(individualObj);
     })
   })
@@ -121,7 +122,10 @@ const server = http.createServer(function serverCallback (req, res) {
       _promiseAccumulator(promiseData.promiseArr, promiseData.idsArr)
       .then(value => {
         console.log(value)
-        mongoInsert(value).then(r => {console.log(r.result)})
+        console.log(mongoInsert(value))
+        //mongoInsert(value)
+        //.then(r => {console.log(r.result)})
+        //.catch(err => {console.log(err)})
         res.end(JSON.stringify(value))
       })
     })
