@@ -7,6 +7,9 @@ const url = require('url');
 /* Require own modules */
 const fbAuth = require('./services/server_authentication.js');
 const fbGraph = require('./services/facebook_query.js');
+const mongoActions = require('./services/mongo_client.js');
+const mongoConnect = require('./services/mongo_client.js').dbConnect;
+const mongoInsert = mongoActions.insertDocuments;
 const getGroup = fbGraph.getGroup;
 const getFeed = fbGraph.getGroupFeed;
 const getReactions = fbGraph.getReactions;
@@ -18,7 +21,7 @@ const port = '8129';
 var feedRes = '';
 
 const _promiseAccumulator = function(promises, ids) {
-  let returnObj = {};
+  let returnObj = [];
   var ready = Promise.resolve(null);
 
   promises.forEach(function _promiseIteration(promise, index) {
@@ -27,7 +30,9 @@ const _promiseAccumulator = function(promises, ids) {
     })
     .then(value => {
       console.log(value)
-      returnObj[`${ids[index]}`] = JSON.parse(value);
+      var individualObj = {};
+      individualObj[`${ids[index]}`] = JSON.parse(value);
+      returnObj.push(individualObj);
     })
   })
   return ready.then(() => { return returnObj; });
@@ -101,17 +106,22 @@ const server = http.createServer(function serverCallback (req, res) {
     })
   }
   if(path.indexOf('meta') > 0 ) {
+
     let feedResponse = '';
     let feedData = '';
     let groupId = path.split('/')[2];
+
     getFeed(groupId, uri.query)
     .then(response => {
       feedResponse = response.toString();
+
       feedData = JSON.parse(feedResponse).data
       promiseData = _mapDataToReaction(feedData)
+
       _promiseAccumulator(promiseData.promiseArr, promiseData.idsArr)
       .then(value => {
         console.log(value)
+        mongoInsert(value).then(r => {console.log(r.result)})
         res.end(JSON.stringify(value))
       })
     })
