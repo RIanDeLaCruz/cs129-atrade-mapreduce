@@ -14,6 +14,34 @@ The server currently has 2 endpoints available:
 - `/reactions/{post-id}`: Used to get the reactions for a post
 - `/meta/{post-id}`: Get feed with associated reactions for each post in the feed
 
+
+## Schema
+
+### `meta` endpoint
+
+~~~
+{
+  "post_id": <post_id>,
+  "data": [
+    {
+      "id": <reaction_id>,
+      "name": <Name of who reacted>,
+      "type": <LIKE, LOVE, ...>
+    },
+    {
+      "id": <reaction_id>,
+      "name": <Name of who reacted>,
+      "type": <LIKE, LOVE, ...>
+    },
+    {
+      "id": <reaction_id>,
+      "name": <Name of who reacted>,
+      "type": <LIKE, LOVE, ...>
+    },
+  ]
+}
+~~~
+
 To get the feed of a Facebook Group or Page, send a GET request to
 the `/feed/{group or page-id}` endpoint
 
