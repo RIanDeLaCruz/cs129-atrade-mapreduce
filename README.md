@@ -4,6 +4,10 @@
 
 Be sure to have Node.js [installed](https://nodejs.org/en/download/package-manager/) on your machine.
 
+Run `npm install`
+
+Before running the node instance, start your mongo instance first.
+
 To run the server: use the `npm start` command.
 
 ## Querying
