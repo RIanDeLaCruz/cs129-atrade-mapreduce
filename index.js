@@ -32,7 +32,7 @@ var feedRes = '';
  * @returns {Promise} Promise that resolves with an array of Posts and metadata
  *
  */
-const _promiseAccumulator = function(promises, ids, stories) {
+const _promiseAccumulator = function(promises, ids, stories, dates) {
   let returnObj = [];
   var ready = Promise.resolve(null);
 
@@ -44,6 +44,7 @@ const _promiseAccumulator = function(promises, ids, stories) {
       //console.log(value)
       var individualObj = {};
       individualObj['post_id'] = `${ids[index]}`;
+      individualObj['date_posted'] = `${dates[index]}`;
       individualObj['post_message'] = `${stories[index]}`;
       individualObj['post_reactions'] = JSON.parse(value).data;
       returnObj.push(individualObj);
@@ -65,15 +66,18 @@ const _mapDataToReaction = function(data) {
   let promiseArr = []
   let idsArr = []
   let storiesArr = []
+  let dateArray = []
   data.map(function(curr, index, arr) {
     promiseArr.push(getReactions(curr.id))
     idsArr.push(curr.id)
     storiesArr.push((curr.story) ? curr.story : curr.message );
+    dateArray.push(curr.created_time)
   })
   return {
     promiseArr: promiseArr,
     idsArr: idsArr,
-    storiesArr: storiesArr
+    storiesArr: storiesArr,
+    dates: dateArray
   }
 }
 
@@ -172,7 +176,9 @@ const server = http.createServer(function serverCallback (req, res) {
       _promiseAccumulator(
         promiseData.promiseArr,
         promiseData.idsArr,
-        promiseData.storiesArr)
+        promiseData.storiesArr,
+        promiseData.dates
+      )
       .then(value => {
         /* value == [{posts},{posts}] */
         _mapDataToComments(value)
