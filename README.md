@@ -26,7 +26,7 @@ The server currently has 2 endpoints available:
 ~~~
 {
   "post_id": <post_id>,
-  "data_posted": <Date Object>,
+  "date_posted": <Date Object>,
   "post_message": <String of message/story>,
   "post_reactions": [
     {
@@ -65,3 +65,15 @@ You can use the following parameters to filter the query:
 Use an ampersand (&) to use multiple parameters
 
 Sample URL with parameters: `cs129-server.iandelacruz.me/meta/19440638720?since=1477958400&until=1479112780`
+
+## Changelog
+---
+
+*29 Nov 2016*
+- Changed the names of fields in the meta endpoint response
+  - `data` -> `post_reactions`
+- Added 3 new fields to the meta endpoint response
+  - `date_posted`
+  - `post_message`
+  - `post_comment_total`
+- Refactored code for modularization
