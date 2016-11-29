@@ -185,9 +185,9 @@ const server = http.createServer(function serverCallback (req, res) {
         .then(withComments => {
           let commentSummary = withComments.map(_handleCommentsArray)
           let posts = _mergeTwoArrays(value, commentSummary)
-          //mongoInsert(withComments)
-          //.then(r => { console.log(r) })
-          //.catch(err => { console.log(err) })
+          mongoInsert(posts)
+          .then(r => { console.log(r) })
+          .catch(err => { console.log(err) })
           res.end(JSON.stringify(posts))
         })
       })
