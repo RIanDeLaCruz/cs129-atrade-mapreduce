@@ -26,7 +26,9 @@ The server currently has 2 endpoints available:
 ~~~
 {
   "post_id": <post_id>,
-  "data": [
+  "data_posted": <Date Object>,
+  "post_message": <String of message/story>,
+  "post_reactions": [
     {
       "id": <reaction_id>,
       "name": <Name of who reacted>,
@@ -42,7 +44,8 @@ The server currently has 2 endpoints available:
       "name": <Name of who reacted>,
       "type": <LIKE, LOVE, ...>
     },
-  ]
+  ],
+  "post_comment_total": <Number of Comments>
 }
 ~~~
 
@@ -61,4 +64,4 @@ You can use the following parameters to filter the query:
 
 Use an ampersand (&) to use multiple parameters
 
-Sample URL with parameters: `cs129-server.iandelacruz.me/feed/{id here}?since=1477958400&until=1479112780`
+Sample URL with parameters: `cs129-server.iandelacruz.me/meta/19440638720?since=1477958400&until=1479112780`
