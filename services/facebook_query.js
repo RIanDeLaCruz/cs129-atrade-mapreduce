@@ -102,8 +102,42 @@ getReactions = function(id, query = null) {
   })
 }
 
+getComments = function(id, query = null) {
+  var token = '';
+  return _generateToken()
+  .then(response => {
+    token = _getTokenFromResponse(response);
+
+    let getUrl = `${variables.hostname}/${id}/comments?`;
+    let buffer = '';
+    if(query != null) {
+      getUrl+=`${query}&access_token=${token}`;
+    } else {
+      getUrl+=`access_token=${token}`;
+    }
+    console.log(getUrl)
+    return new Promise(function(resolve, reject) {
+      https.get(getUrl, function(res) {
+        res.on('data', (d) => {
+          buffer += d;
+        });
+        res.on('end', () => {
+          resolve(buffer)
+        })
+        res.on('error', (err) => {
+          reject(err);
+        });
+      })
+    })
+  })
+  .catch(err => {
+    console.log(err);
+  })
+}
+
 module.exports = {
   getGroup: getGroup,
   getGroupFeed: getGroupFeed,
-  getReactions: getReactions
+  getReactions: getReactions,
+  getComments: getComments
 }
