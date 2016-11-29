@@ -13,6 +13,7 @@ const mongoInsert = mongoActions.insertDocuments;
 const getGroup = fbGraph.getGroup;
 const getFeed = fbGraph.getGroupFeed;
 const getReactions = fbGraph.getReactions;
+const getComments = fbGraph.getComments;
 
 /* Define constant values */
 const hostname = '127.0.0.1';
@@ -157,6 +158,18 @@ const server = http.createServer(function serverCallback (req, res) {
     .catch(err => {
       console.log(err)
     });
+  }
+  if(path.indexOf('comments') > 0) {
+    let commentsReponse = '';
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    var groupId = path.split('/')[2];
+    getComments(groupId, uri.query)
+    .then(response => {
+      console.log(response)
+      commentsReponse = response.toString();
+      res.end(commentsReponse);
+    })
   }
 });
 
