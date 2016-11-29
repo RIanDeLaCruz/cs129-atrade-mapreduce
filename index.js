@@ -41,7 +41,7 @@ const _promiseAccumulator = function(promises, ids, stories) {
       return promise;
     })
     .then(value => {
-      console.log(value)
+      //console.log(value)
       var individualObj = {};
       individualObj['post_id'] = `${ids[index]}`;
       individualObj['post_message'] = `${stories[index]}`;
@@ -75,6 +75,31 @@ const _mapDataToReaction = function(data) {
     idsArr: idsArr,
     storiesArr: storiesArr
   }
+}
+
+/**
+ *
+ *
+ */
+
+const _mapDataToComments = function(postArray) {
+  let getCommentsPromises = [];
+  postArray.map(function(curr, index, arr) {
+    getCommentsPromises.push(getComments(curr.post_id, 'summary=1&filter=stream'))
+  });
+  return Promise.all(getCommentsPromises);
+}
+
+const _handleCommentsArray = function(curr, ndx, arr) {
+  return JSON.parse(curr).summary.total_count;
+}
+
+const _mergeTwoArrays = function(arr1, arr2) {
+  let retArr = arr1.map(function(curr, ndx, arr) {
+    curr['post_comment_total'] = arr2[ndx];
+    return curr;
+  })
+  return retArr;
 }
 
 const server = http.createServer(function serverCallback (req, res) {
@@ -149,10 +174,16 @@ const server = http.createServer(function serverCallback (req, res) {
         promiseData.idsArr,
         promiseData.storiesArr)
       .then(value => {
-        mongoInsert(value)
-        .then(r => { console.log(r) })
-        .catch(err => { console.log(err) })
-        res.end(JSON.stringify(value))
+        /* value == [{posts},{posts}] */
+        _mapDataToComments(value)
+        .then(withComments => {
+          let commentSummary = withComments.map(_handleCommentsArray)
+          let posts = _mergeTwoArrays(value, commentSummary)
+          //mongoInsert(withComments)
+          //.then(r => { console.log(r) })
+          //.catch(err => { console.log(err) })
+          res.end(JSON.stringify(posts))
+        })
       })
     })
     .catch(err => {

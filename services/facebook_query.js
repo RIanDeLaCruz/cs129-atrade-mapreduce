@@ -115,7 +115,6 @@ getComments = function(id, query = null) {
     } else {
       getUrl+=`access_token=${token}`;
     }
-    console.log(getUrl)
     return new Promise(function(resolve, reject) {
       https.get(getUrl, function(res) {
         res.on('data', (d) => {
