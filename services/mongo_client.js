@@ -64,21 +64,6 @@ const insertDocuments = function(documentsArray) {
   .catch(err => {
     return Promise.reject(err)
   })
-
-  //MongoClient.connect(url, function(err, db) {
-    //let col = db.collection('test');
-    //var opts = {
-      //ordered: true,
-      //w: 1,
-      //safe: true
-    //}
-    //col.bulkWrite(ops, opts, function(err, result){
-      //if(err) console.log(err)
-      //console.log(result)
-      //db.close();
-      //return (err) ? err: result;
-    //})
-  //})
 }
 
 const dbConnect = function() {
