@@ -20,7 +20,18 @@ const port = '8129';
 
 var feedRes = '';
 
-const _promiseAccumulator = function(promises, ids) {
+/**
+ * Returns a Promise that contains an array of posts, with
+ * their respective ids, story and reactions
+ *
+ * @param {Array} promises - Array of promises
+ * @param {Array} ids - Array of ids
+ * @param {Array} stories - Array of stories
+ *
+ * @returns {Promise} Promise that resolves with an array of Posts and metadata
+ *
+ */
+const _promiseAccumulator = function(promises, ids, stories) {
   let returnObj = [];
   var ready = Promise.resolve(null);
 
@@ -32,23 +43,36 @@ const _promiseAccumulator = function(promises, ids) {
       console.log(value)
       var individualObj = {};
       individualObj['post_id'] = `${ids[index]}`;
-      individualObj['data'] = JSON.parse(value).data;
+      individualObj['post_message'] = `${stories[index]}`;
+      individualObj['post_reactions'] = JSON.parse(value).data;
       returnObj.push(individualObj);
     })
   })
   return ready.then(() => { return returnObj; });
 }
 
+/**
+ * Returns a Promise that contains an array of posts, with
+ * their respective ids, story and reactions
+ *
+ * @param {Array} data - Array of post objects
+ *
+ * @returns {Object} Object containing Promises, Ids, and Stories
+ *
+ */
 const _mapDataToReaction = function(data) {
   let promiseArr = []
   let idsArr = []
+  let storiesArr = []
   data.map(function(curr, index, arr) {
     promiseArr.push(getReactions(curr.id))
     idsArr.push(curr.id)
+    storiesArr.push((curr.story) ? curr.story : curr.message );
   })
   return {
     promiseArr: promiseArr,
-    idsArr: idsArr
+    idsArr: idsArr,
+    storiesArr: storiesArr
   }
 }
 
