@@ -15,12 +15,17 @@ const getFeed = fbGraph.getGroupFeed;
 const getReactions = fbGraph.getReactions;
 const getComments = fbGraph.getComments;
 
+const objectController = require('./controllers/objectController.js');
+const feedController = require('./controllers/feedController.js');
+const reactionsController = require('./controllers/reactionsController.js');
+const metaController = require('./controllers/metaController.js');
+const commentsController = require('./controllers/commentsController.js');
+
 /* Define constant values */
 const hostname = '127.0.0.1';
 const port = '8129';
 
 var feedRes = '';
-
 /**
  * Returns a Promise that contains an array of posts, with
  * their respective ids, story and reactions
@@ -197,16 +202,7 @@ const server = http.createServer(function serverCallback (req, res) {
     });
   }
   if(path.indexOf('comments') > 0) {
-    let commentsReponse = '';
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    var groupId = path.split('/')[2];
-    getComments(groupId, uri.query)
-    .then(response => {
-      console.log(response)
-      commentsReponse = response.toString();
-      res.end(commentsReponse);
-    })
+    commentsController(res, path, uri)
   }
 });
 
