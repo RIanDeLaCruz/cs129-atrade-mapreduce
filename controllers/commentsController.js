@@ -1,3 +1,12 @@
+/**
+ * Comments Controller
+ * @module controllers/commentsController
+ *
+ */
+
+const fbGraph = require('../services/facebook_query.js');
+const getComments = fbGraph.getComments;
+
 const commentsController = function(res, path, uri) {
   let commentsReponse = '';
   res.statusCode = 200;

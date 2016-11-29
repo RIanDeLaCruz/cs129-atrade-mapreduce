@@ -1,3 +1,12 @@
+/*
+ * Object Controller
+ * @module controllers/objectController
+ *
+ */
+
+const fbGraph = require('../services/facebook_query.js');
+const getGroup = fbGraph.getGroup;
+
 const objectController = function(res, path, uri) {
   var groupResponse = '';
   res.statusCode = 200;
