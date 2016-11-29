@@ -143,13 +143,14 @@ const server = http.createServer(function serverCallback (req, res) {
       feedData = JSON.parse(feedResponse).data
       promiseData = _mapDataToReaction(feedData)
 
-      _promiseAccumulator(promiseData.promiseArr, promiseData.idsArr)
+      _promiseAccumulator(
+        promiseData.promiseArr,
+        promiseData.idsArr,
+        promiseData.storiesArr)
       .then(value => {
-        console.log(value)
-        //console.log(mongoInsert(value))
         mongoInsert(value)
-        .then(r => {console.log(r)})
-        .catch(err => {console.log(err)})
+        .then(r => { console.log(r) })
+        .catch(err => { console.log(err) })
         res.end(JSON.stringify(value))
       })
     })
