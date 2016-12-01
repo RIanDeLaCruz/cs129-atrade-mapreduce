@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon --inspect --debug-brk index.js",
+    "test": "nodemon index.js",
+    "chrome": "nodemon --inspect --debug-brk index.js",
     "start": "node index.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^2.2.11"
+  }
 }

@@ -5,14 +5,16 @@ const https = require('https');
 const url = require('url');
 
 /* Require own modules */
-const fbAuth = require('./services/server_authentication.js');
-const fbGraph = require('./services/facebook_query.js');
-const getGroup = fbGraph.getGroup;
-const getFeed = fbGraph.getGroupFeed;
+const objectController = require('./controllers/objectController.js');
+const feedController = require('./controllers/feedController.js');
+const reactionsController = require('./controllers/reactionsController.js');
+const metaController = require('./controllers/metaController.js');
+const commentsController = require('./controllers/commentsController.js');
 
 /* Define constant values */
 const hostname = '127.0.0.1';
 const port = '8129';
+
 
 const server = http.createServer(function serverCallback (req, res) {
   var uri = url.parse(req.url);
@@ -26,33 +28,20 @@ const server = http.createServer(function serverCallback (req, res) {
         }
       });
   }
-  if(path.indexOf('group') > 0) {
-    var groupResponse = '';
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    var groupId = path.split('/')[2]
-    getGroup(groupId)
-    .then(response => {
-      groupResponse = response.toString()
-      res.end(groupResponse);
-    })
-    .catch(err => {
-      console.log(err)
-    });
+  if(path.indexOf('object') > 0) {
+    objectController(res, path, uri);
   }
   if(path.indexOf('feed') > 0) {
-    var groupResponse = '';
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    var groupId = path.split('/')[2]
-    getFeed(groupId, uri.query)
-    .then(response => {
-      groupResponse = response.toString()
-      res.end(groupResponse);
-    })
-    .catch(err => {
-      console.log(err)
-    });
+    feedController(res, path, uri);
+  }
+  if(path.indexOf('reactions') > 0) {
+    feedController(res, path, uri);
+  }
+  if(path.indexOf('meta') > 0 ) {
+    metaController(res, path, uri)
+  }
+  if(path.indexOf('comments') > 0) {
+    commentsController(res, path, uri);
   }
 });
 
