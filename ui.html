@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<link href="bootstrap.min.css" rel=stylesheet> <link href="bootstrap.min.js" rel=stylesheet>
+		
+		<title>Top 10 Org Posts</title>
+		
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script language="javascript" type="text/javascript">
+			function getResults() {
+				alert("calling getResults");
+				
+				$.ajax({
+					type: "GET",
+					url: "cs129-server.iandelacruz.me/feed/332204390194276?since=1477958400&until=1479112780",
+					data: "",
+					dataType: "json",
+					contentType: "application/json; charset=utf-8",
+					async: true,
+					success: OnSuccess,
+					error: OnError
+				});
+
+				function OnSuccess(data) {
+					alert("success");
+					alert(data.val());
+				}
+				
+				function OnError(data) {
+					alert("ERROR " + data.error);
+				}
+			}
+		</script>
+
+	</head>
+	
+	<body>
+		<h1>Testing Website</h1>
+		<div class="panel panel-default panel-primary">
+			<div>
+				<div class="panel-body">
+				<div class="form-group">
+					<label for="queryText">Looking for:</label>
+					<input type="text" id="queryText" class="form-control" placeholder="Enter keywords"></input>
+				</div>
+				<p>
+				<div class="container" style="text-align:center;">
+					<button type="button" onclick="getResults()" class="btn btn-primary" align="center" >Search For Top 10 Results</button>
+				</div>
+			</div>
+		</div>
+		
+		</div>
+		
+		<div class="list-group" id="resultsList">
+			<a href="#" class="list-group-item">
+				<div>
+					<h3 id="title" align="center">Title</h3> 
+					<p>
+					<h4 id="pageSource" align="center">Page It Came From</h4>
+					<p>
+					<h5 id="date" align="center">Date</h5>
+					<br>
+					<label id="body">Body </label>
+					<br>
+					<h6 id="reactions">Reactions</h6>
+					<p>
+					<h6 id="comments">Comments</h6>
+					
+				</div>
+			</a>
+			
+		</div>
+	</body>
+
+
+
+</html>
