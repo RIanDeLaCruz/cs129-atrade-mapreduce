@@ -5,7 +5,6 @@
  */
 
 const mongoActions = require('../services/mongo_client.js');
-const mongoConnect = require('../services/mongo_client.js').dbConnect;
 const mongoInsert = mongoActions.insertDocuments;
 
 const helpers = require('../helpers/arrayHelpers');

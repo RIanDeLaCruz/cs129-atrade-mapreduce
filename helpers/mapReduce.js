@@ -5,9 +5,11 @@
   */
 
 const mapReactions = function() {
+  emit(this.post_id, 1);
 }
 
 const reduceReactions = function(keyObject, valuesArr) {
+  return valuesArr.length;
 }
 
 module.exports = {
