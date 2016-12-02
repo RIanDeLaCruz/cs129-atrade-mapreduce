@@ -45,7 +45,7 @@ const _documentMap = function(curr, ndx, arr) {
  * @param {Array} documentsArray - array of documents to be inserted
  *
  */
-const insertDocuments = function(documentsArray) {
+const insertDocuments = function(documentsArray, objectId) {
   let ops = documentsArray.map(_documentMap);
   let opts = {
     ordered: true,
@@ -55,7 +55,7 @@ const insertDocuments = function(documentsArray) {
 
   return MongoClient.connect(url)
   .then(db => {
-    let col = db.collection('test');
+    let col = db.collection(`${objectId}`);
     return col.bulkWrite(ops, opts)
   })
   .then(results => {
