@@ -1,0 +1,60 @@
+
+
+			function getResults() {
+				alert("calling getResults");
+				
+				$.ajax({
+					type: "GET",
+					url: "cs129-server.iandelacruz.me/meta/332204390194276?since=1477958400&until=1479112780",
+					data: "",
+					dataType: "json",
+					contentType: "application/json; charset=utf-8",
+					async: true,
+					success: OnSuccess,
+					error: OnError
+				});
+
+				function OnSuccess(data) {
+					alert("success " + data.val());
+				}
+				
+				function OnError(data) {
+					alert("ERROR " + data.error);
+				}
+			var url = "http://cs129-server.iandelacruz.me/feed/332204390194276?since=1477958400&until=1479112780"
+			var getResults = function(){
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", url);
+				xhr.onload = function() {
+					alert(this.responseText)
+				}
+				xhr.onerror = function(err) {
+					alert(err)
+				}
+				xhr.send();
+			}
+		$.each(data, function (key, value{
+					$("#resultsList").append("<a href='#' class='list-group-item'>" +
+						"<div>" +
+							"<h3 align='center'>" + "TITLE" +"</h3>" + 
+							"<p>" +
+							"<h4 align='center'>" + "PAGE SOURCE" + "</h4>" +
+							"<p>" +
+							"<h5 align='center'>" + data.created_time + "</h5>" +
+							"<br>" +
+							"<label>" + data.message + "</label>" +
+							"<br>" +
+							"<h6 >" + "Reactions" + "</h6>" +
+							"<p>" +
+							"<h6>" + "Comments" + "</h6>" +
+						"</div>" +
+					"</a>"
+					)}))
+					
+if n starts at 0 --	
+function getReactions(int n, string jsonstring){
+	if(paging.next == null);
+		return jsonstring
+	else
+		jsonstring += page.get() + getReactions(n+1, jsonstring)
+}

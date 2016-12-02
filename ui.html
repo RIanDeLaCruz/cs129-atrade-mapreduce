@@ -3,29 +3,61 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<link href="bootstrap.min.css" rel=stylesheet> <link href="bootstrap.min.js" rel=stylesheet>
+		<link href="bootstrap.min.css" rel=stylesheet> 
+		<link href="bootstrap.min.js" rel=stylesheet>
+		 
 		
 		<title>Top 10 Org Posts</title>
 		
 		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		
+		<script src="moment.js"></script>
 		<script language="javascript" type="text/javascript">
+		$( document ).ready(function() {
+			<!-- var today = moment().format('MM/DD/YYYY hh:mm:ss'); -->
+			<!-- document.getElementById("startdate").value = today;  -->
+		});
 			function getResults() {
-				alert("calling getResults");
+				var startDate = moment($("#startdate").val()).unix().toString();
+				var endDate = moment($("#enddate").val()).unix().toString();
+				alert(startDate + " " + endDate)
+				alert($("#startdate").val());
+				
 				
 				$.ajax({
 					type: "GET",
-					url: "cs129-server.iandelacruz.me/feed/332204390194276?since=1477958400&until=1479112780",
+					url: "http://cs129-server.iandelacruz.me/meta/110345575679186?since="+ startDate +"&until=" + endDate,
 					data: "",
 					dataType: "json",
 					contentType: "application/json; charset=utf-8",
-					async: true,
+					async: false,
 					success: OnSuccess,
 					error: OnError
 				});
 
 				function OnSuccess(data) {
-					alert("success");
-					alert(data.val());
+					
+					$.each(data, function (key, value){
+					var reactionsTotal =  Object.keys(value.post_reactions).length;
+					var dates = new Date(value.date_posted);
+					var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
+					$("#resultsList").append("<a href='#' class='list-group-item'>" +
+						"<div>" +
+							"<h3 align='center'>" + "TITLE" +"</h3>" + 
+							"<p>" +
+							"<h4 align='center'>" + "PAGE SOURCE" + "</h4>" +
+							"<p>" +
+							"<h5 align='center'>" + parsedDate + "</h5>" +
+							"<br>" +
+							"<label>" + value.post_message + "</label>" +
+							"<br>" +
+							"<h6 >" + reactionsTotal + "</h6>" +
+							"<p>" +
+							"<h6>" + value.post_comment_total + "</h6>" +
+						"</div>" +
+					"</a>"
+					
+					)});
 				}
 				
 				function OnError(data) {
@@ -44,6 +76,13 @@
 				<div class="form-group">
 					<label for="queryText">Looking for:</label>
 					<input type="text" id="queryText" class="form-control" placeholder="Enter keywords"></input>
+					<br>
+					<label for="startdate">Start Date: </label>
+					<input type="datetime-local" id="startdate"></input>
+					
+					<br>
+					<label for="enddate">End Date: </label>
+					<input type="datetime-local" id="enddate"></input>
 				</div>
 				<p>
 				<div class="container" style="text-align:center;">
@@ -56,20 +95,7 @@
 		
 		<div class="list-group" id="resultsList">
 			<a href="#" class="list-group-item">
-				<div>
-					<h3 id="title" align="center">Title</h3> 
-					<p>
-					<h4 id="pageSource" align="center">Page It Came From</h4>
-					<p>
-					<h5 id="date" align="center">Date</h5>
-					<br>
-					<label id="body">Body </label>
-					<br>
-					<h6 id="reactions">Reactions</h6>
-					<p>
-					<h6 id="comments">Comments</h6>
-					
-				</div>
+				
 			</a>
 			
 		</div>
