@@ -80,9 +80,9 @@ getReactions = function(id, query = null) {
     let getUrl = `${variables.hostname}/${id}/reactions?`;
     let buffer = '';
     if(query != null) {
-      getUrl+=`${query}&access_token=${token}`;
+      getUrl+=`${query}&access_token=${token}&limit=100`;
     } else {
-      getUrl+=`access_token=${token}`;
+      getUrl+=`access_token=${token}&limit=100`;
     }
     console.log(getUrl)
 
