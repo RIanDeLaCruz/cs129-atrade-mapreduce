@@ -1,6 +1,9 @@
 const MongoClient = require('mongodb').MongoClient;
 const assert =  require('assert');
 
+const reactionsMap = require('../helpers/mapReduce.js').mapReactions;
+const reactionsReduce = require('../helpers/mapReduce.js').reduceReactions;
+
 const url = 'mongodb://localhost:27017/search_results';
 
 const _callbackInsert = function(documentsArray) {
@@ -45,7 +48,7 @@ const _documentMap = function(curr, ndx, arr) {
  * @param {Array} documentsArray - array of documents to be inserted
  *
  */
-const insertDocuments = function(documentsArray) {
+const insertDocuments = function(documentsArray, objectId) {
   let ops = documentsArray.map(_documentMap);
   let opts = {
     ordered: true,
@@ -55,27 +58,60 @@ const insertDocuments = function(documentsArray) {
 
   return MongoClient.connect(url)
   .then(db => {
-    let col = db.collection('test');
+    let col = db.collection(`_${objectId}`);
     return col.bulkWrite(ops, opts)
   })
   .then(results => {
-    return Promise.resolve(ops)
+    return mapReduceReactions(objectId)
+  })
+  .then(collectionData => {
+    return Promise.resolve(collectionData)
   })
   .catch(err => {
     return Promise.reject(err)
   })
+  //return MongoClient.connect(url)
+  //.then(db => {
+    //let col = db.collection(`_${objectId}`);
+    //return col.bulkWrite(ops, opts)
+  //})
+  //.then(results => {
+    //return Promise.resolve(ops)
+  //})
+  //.catch(err => {
+    //return Promise.reject(err)
+  //})
 }
 
-const dbConnect = function() {
-  MongoClient.connect(url, function _connectCallback(err, db) {
-    assert.equal(null, err);
-    console.log("Connected correctly to server");
 
-    db.close();
-  });
+/**
+ * Maps an array of objects into an array of update operations
+ *
+ * @param {Array} documentsArray - array of documents to be inserted
+ *
+ */
+const mapReduceReactions = function(objectId) {
+  let opts = {
+    out: {replace: `_${objectId}.results`}
+  }
+  return MongoClient.connect(url)
+  .then(db => {
+    let col = db.collection(`_${objectId}`);
+    return col.mapReduce(reactionsMap, reactionsReduce, opts)
+  })
+  .then(outCollection => {
+    return outCollection.find()
+  })
+  .then(data => {
+    return Promise.resolve(data.toArray())
+  })
+  .catch(err => {
+    return Promise.reject(err)
+    console.log(err)
+  })
 }
 
 module.exports = {
-  dbConnect: dbConnect,
-  insertDocuments: insertDocuments
+  insertDocuments: insertDocuments,
+  mapReduceReactions: mapReduceReactions
 };

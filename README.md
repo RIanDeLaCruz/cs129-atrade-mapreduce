@@ -77,3 +77,9 @@ Sample URL with parameters: `cs129-server.iandelacruz.me/meta/19440638720?since=
   - `post_message`
   - `post_comment_total`
 - Refactored code for modularization
+
+`3 Dec 2016`
+- Added a simple map-reduce function that counts the how many of each reactions there is to a specific post`
+- You can now use the nickname, instead of the id, for querying
+  - Example: You can use `CompSAteneo` for searching posts of CompSAt
+  - This is the end of the URL of CompSAt

@@ -5,7 +5,6 @@
  */
 
 const mongoActions = require('../services/mongo_client.js');
-const mongoConnect = require('../services/mongo_client.js').dbConnect;
 const mongoInsert = mongoActions.insertDocuments;
 
 const helpers = require('../helpers/arrayHelpers');
@@ -41,7 +40,7 @@ const metaController = function(res, path, uri) {
       .then(withComments => {
         let commentSummary = withComments.map(_handleCommentsArray)
         let posts = _mergeTwoArrays(value, commentSummary)
-        mongoInsert(posts)
+        mongoInsert(posts, groupId)
         .then(r => { console.log(r) })
         .catch(err => { console.log(err) })
         res.end(JSON.stringify(posts))
