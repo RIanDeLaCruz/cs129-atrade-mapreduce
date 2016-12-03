@@ -5,11 +5,18 @@
   */
 
 const mapReactions = function() {
-  emit(this.post_id, 1);
+  var reactions = this.post_reactions;
+  for(var i = 0; i < reactions.length; i++) {
+    emit({id: this.post_id, reaction_type: reactions[i].type}, 1);
+  }
 }
 
 const reduceReactions = function(keyObject, valuesArr) {
-  return valuesArr.length;
+  var count = 0;
+  for(var i = 0; i < valuesArr.length - 1; i++ ) {
+    count += 1;
+  }
+  return count;
 }
 
 module.exports = {

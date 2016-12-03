@@ -103,7 +103,7 @@ const mapReduceReactions = function(objectId) {
     return outCollection.find()
   })
   .then(data => {
-    return Promise.resolve(data)
+    return Promise.resolve(data.toArray())
   })
   .catch(err => {
     return Promise.reject(err)
