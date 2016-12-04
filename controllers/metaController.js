@@ -42,6 +42,7 @@ const metaController = function(res, path, uri) {
       )
     }
     let value = '';
+    let postsArray = [];
     Promise.all(feedPromisesArray)
     .then(responseArray => {
       value = responseArray;
@@ -57,16 +58,19 @@ const metaController = function(res, path, uri) {
       for(let i = 0; i < postCommentsArray.length; i++) {
         let commentSummary = postCommentsArray[i].map(_handleCommentsArray)
         let posts = _mergeTwoArrays(value[i], commentSummary)
+        postsArray.push(posts);
         insertPromiseArray.push(mongoInsert(posts, ids[i]))
       }
       return Promise.all(insertPromiseArray)
     })
     .then(r => {
       let returnObj = {};
+      let allPosts = {};
       for(let i = 0; i < r.length; i++) {
+        allPosts[ids[i]] = postsArray[i];
         returnObj[ids[i]] = r[i];
       }
-      res.end(JSON.stringify(returnObj))
+      res.end(JSON.stringify(allPosts))
     })
 
     //_promiseAccumulator(
