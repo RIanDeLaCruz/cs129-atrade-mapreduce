@@ -70,7 +70,7 @@ const metaController = function(res, path, uri) {
         allPosts[ids[i]] = postsArray[i];
         returnObj[ids[i]] = r[i];
       }
-      res.end(JSON.stringify(allPosts))
+      res.end(JSON.stringify(returnObj))
     })
 
     //_promiseAccumulator(
