@@ -46,12 +46,12 @@ getGroupFeed = function(id, query = null) {
   .then(response => {
     token = _getTokenFromResponse(response);
 
-    let getUrl = `${variables.hostname}/${id}/feed?`;
+    let getUrl = `${variables.hostname}/feed?ids=${id}`;
     let buffer = '';
     if(query != null) {
-      getUrl+=`${query}&access_token=${token}`;
+      getUrl+=`&${query}&access_token=${token}`;
     } else {
-      getUrl+=`access_token=${token}`;
+      getUrl+=`&access_token=${token}`;
     }
     console.log(getUrl)
 
