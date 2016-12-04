@@ -4,7 +4,7 @@
   *
   */
 
-/*const mapReactions = function() {
+const mapReactions = function() {
   var reactions = this.post_reactions;
   for(var i = 0; i < reactions.length; i++) {
     emit({id: this.post_id, reaction_type: reactions[i].type}, 1);
@@ -18,8 +18,8 @@ const reduceReactions = function(keyObject, valuesArr) {
   }
   return count;
 }
-*/
-const mapReactions = function() {
+
+/*const mapReactions = function() {
   var reactions = this.post_reactions;
   var comments = this.post_comment_total;
   emit({id: this.post_id}, {count: reactions.length+comments});
@@ -31,7 +31,7 @@ const reduceReactions = function(key, values) {
     toatl += values[i].count;
   }
   return {count:total};
-}
+}*/
 
 module.exports = {
   mapReactions: mapReactions,
