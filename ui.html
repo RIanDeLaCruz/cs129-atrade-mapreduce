@@ -3,29 +3,44 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<link href="bootstrap.min.css" rel=stylesheet> 
-		<link href="bootstrap.min.js" rel=stylesheet>
-		 
-		
-		<title>Top 10 Org Posts</title>
-		
+		<link href="bootstrap.min.css" rel=stylesheet>
+		<link href="style.css" rel=stylesheet>
+
+
+		<title>COA: STC Post Retriever</title>
+
 		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-		
+
 		<script src="moment.js"></script>
+		<script src="bootstrap.min.js"></script>
+
 		<script language="javascript" type="text/javascript">
 		$( document ).ready(function() {
 			<!-- var today = moment().format('MM/DD/YYYY hh:mm:ss'); -->
 			<!-- document.getElementById("startdate").value = today;  -->
+			getResults();
 		});
+			function getValueByKey(key, data) {
+				var i, len = data.length;
+
+				for (i = 0; i < len; i++) {
+					if (data[i] && data[i].hasOwnProperty(key)) {
+						return data[i][key];
+					}
+				}
+
+				return -1;
+			}
 			function getResults() {
 				var startDate = moment($("#startdate").val()).unix().toString();
 				var endDate = moment($("#enddate").val()).unix().toString();
-	
-				
-				
+
+
+
 				$.ajax({
 					type: "GET",
-					url: "http://cs129-server.iandelacruz.me/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA?since="+ startDate +"&until=" + endDate,
+					url: "http://localhost:8129/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA?limit=1",
+					//url: "http://cs129-server.iandelacruz.me/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA?limit=5",
 					data: "",
 					dataType: "json",
 					contentType: "application/json; charset=utf-8",
@@ -35,30 +50,54 @@
 				});
 
 				function OnSuccess(data) {
-					
+					// Top Posts
+					var count = 0;
+					$("#resultsList").append("<h1>Top Posts</h1>");
+
 					$.each(data, function (key, value){
-					<!-- var reactionsTotal =  Object.keys(value.post_reactions).length; -->
-					var dates = new Date(value.date_posted);
-					var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
-					$("#resultsList").append("<a href='#' class='list-group-item'>" +
-						"<div>" +
-							"<h3 align='center'>" + "TITLE" +"</h3>" + 
-							"<p>" +
-							"<h4 align='center'>" + "PAGE SOURCE" + "</h4>" +
-							"<p>" +
-							"<h5 align='center'>" + parsedDate + "</h5>" +
-							"<br>" +
-							"<label>" + value.post_message + "</label>" +
-							"<br>" +
-							"<h6 >" + "Total Reactions: 30" + "</h6>" +
-							"<p>" +
-							"<h6> Total Comments: " + value.post_comment_total + "</h6>" +
-						"</div>" +
-					"</a>"
-					
-					)});
+						$.each(value, function(Tkey, Tvalue){
+							var dates = new Date(Tvalue.date_posted);
+							var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
+							var reactionsTotal =  Object.keys(Tvalue.post_reactions).length;
+							if (count % 3 == 0) {
+								$("#resultsList").append("<div class=\"row\">");
+							}
+
+							$("#resultsList").append(
+								"<div class=\"col-sm-4\"> <div class=\"post-body\">" +
+									"<h3 align='center'>" + "TITLE" +"</h3>" +
+									"<p>" +
+									"<h4 align='center'>" + "PAGE NAME" + "</h4>" +
+									"<p>" +
+									"<h5 align='center'>" + parsedDate + "</h5>" +
+									"<br> <div class=\"post-content\">" +
+									Tvalue.post_message +
+									"</div><br>" +
+									"<h6 >Total Reactions: "+ reactionsTotal + "</h6>" +
+									"<p>" +
+									"<h6> Total Comments: " + Tvalue.post_comment_total + "</h6>" +
+								"</div></div>"
+							)
+							if (count % 3 == 0) {
+								$("#resultsList").append("</div>");
+							}
+
+							count++;
+
+
+						});
+
+					});
+
+					if (count % 3 != 0) {
+						$("#resultsList").append("</div>");
+					}
+
+					// Viz
+					$("#viz").append("<h1>Data Visualization</h1>");
+
 				}
-				
+
 				function OnError(data) {
 					alert("ERROR " + data.error);
 				}
@@ -66,37 +105,56 @@
 		</script>
 
 	</head>
-	
+
 	<body>
-		<div class="panel panel-default panel-primary">
-			<div>
-				<div class="panel-body">
-				<div class="form-group">
-					<label for="queryText">Looking for:</label>
-					<input type="text" id="queryText" class="form-control" placeholder="Enter keywords"></input>
-					<br>
-					<label for="startdate">Start Date: </label>
-					<input type="datetime-local" id="startdate"></input>
-					
-					<br>
-					<label for="enddate">End Date: </label>
-					<input type="datetime-local" id="enddate"></input>
-				</div>
-				<p>
-				<div class="container" style="text-align:center;">
-					<button type="button" onclick="getResults()" class="btn btn-primary" align="center" >Search For Top 10 Results</button>
+		<div class="sleepy">
+			<h1>COA: STC Post Retriever</h1>
+		<div class="row">
+			<div class="col-sm-5">
+				<div class="content">
+
+					<center><img src="logo.png" width=100 height=100></center>
+					<div class="post-content">
+						A search engine that retrieves posts from the Facebook Pages of organizations belonging to the Science and Technology Cluster: ACheS, AECES, AMS, BOx, CompSAt, LeaPs, MISA and Psyche. <br><br>
+
+						<B>How it Works</b><br>
+						Fill in the parameters on the right hand side and click on the Search button. The web application will go through the aforementioned STC Facebook pages and retrieve posts containing the keyword you entered. It will then display the ten most popular posts based on the number of reactions and comments. Graphs will also be presented in order to visualize information regarding the retrieved results.
+					</div>
 				</div>
 			</div>
+			<div class="col-sm-7">
+				<div class="content">
+						<div class="form-group">
+						    <label for="queryText">Search Query</label>
+						    <input type="text" class="form-control" id="queryText"  placeholder="Enter keyword">
+						</div>
+
+						<div class="form-group">
+	 					    <label for="queryText">Start Date</label>
+	 					    <input type="datetime-local" class="form-control" id="startdate"  placeholder="eg. 11/11/16">
+	 					</div>
+
+						<div class="form-group">
+	 					    <label for="queryText">End Date</label>
+	 					    <input type="datetime-local" class="form-control" id="enddate" placeholder="eg. 12/12/16">
+	 					</div>
+
+						<button type="button" onclick="getResults()" class="btn btn-default btn-lg" align="center" >Search</button>
+				</div>
+			</div>
+
+		</div> <!--row-->
+
+		<div id="resultsList">
+
 		</div>
-		
+
+
+		<div id="viz">
+
 		</div>
-		
-		<div class="list-group" id="resultsList">
-			<a href="#" class="list-group-item">
-				
-			</a>
-			
-		</div>
+
+	</div> <!--sleepy-->
 	</body>
 
 
