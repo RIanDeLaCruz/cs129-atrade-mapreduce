@@ -17,6 +17,17 @@
 			<!-- var today = moment().format('MM/DD/YYYY hh:mm:ss'); -->
 			<!-- document.getElementById("startdate").value = today;  -->
 		});
+			function getValueByKey(key, data) {
+				var i, len = data.length;
+				
+				for (i = 0; i < len; i++) {
+					if (data[i] && data[i].hasOwnProperty(key)) {
+						return data[i][key];
+					}
+				}
+				
+				return -1;
+			}
 			function getResults() {
 				var startDate = moment($("#startdate").val()).unix().toString();
 				var endDate = moment($("#enddate").val()).unix().toString();
@@ -25,7 +36,7 @@
 				
 				$.ajax({
 					type: "GET",
-					url: "http://cs129-server.iandelacruz.me/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA?since="+ startDate +"&until=" + endDate,
+					url: "http://cs129-server.iandelacruz.me/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA",
 					data: "",
 					dataType: "json",
 					contentType: "application/json; charset=utf-8",
@@ -37,26 +48,31 @@
 				function OnSuccess(data) {
 					
 					$.each(data, function (key, value){
-					<!-- var reactionsTotal =  Object.keys(value.post_reactions).length; -->
-					var dates = new Date(value.date_posted);
-					var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
-					$("#resultsList").append("<a href='#' class='list-group-item'>" +
-						"<div>" +
-							"<h3 align='center'>" + "TITLE" +"</h3>" + 
-							"<p>" +
-							"<h4 align='center'>" + "PAGE SOURCE" + "</h4>" +
-							"<p>" +
-							"<h5 align='center'>" + parsedDate + "</h5>" +
-							"<br>" +
-							"<label>" + value.post_message + "</label>" +
-							"<br>" +
-							"<h6 >" + "Total Reactions: 30" + "</h6>" +
-							"<p>" +
-							"<h6> Total Comments: " + value.post_comment_total + "</h6>" +
-						"</div>" +
-					"</a>"
+						$.each(value, function(Tkey, Tvalue){
+							var dates = new Date(Tvalue.date_posted);
+							var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
+							var reactionsTotal =  Object.keys(Tvalue.post_reactions).length;
+						
+							$("#resultsList").append("<a href='#' class='list-group-item'>" +
+								"<div>" +
+									"<h3 align='center'>" + "TITLE" +"</h3>" + 
+									"<p>" +
+									"<h4 align='center'>" + "PAGE NAME" + "</h4>" +
+									"<p>" +
+									"<h5 align='center'>" + parsedDate + "</h5>" +
+									"<br>" +
+									"<label>" + Tvalue.post_message + "</label>" +
+									"<br>" +
+									"<h6 >Total Reactions: "+ reactionsTotal + "</h6>" +
+									"<p>" +
+									"<h6> Total Comments: " + Tvalue.post_comment_total + "</h6>" +
+								"</div>" +
+							"</a>"
+							
+							)
+						});
 					
-					)});
+					});
 				}
 				
 				function OnError(data) {
