@@ -25,27 +25,31 @@ The server currently has 2 endpoints available:
 
 ~~~
 {
-  "post_id": <post_id>,
-  "date_posted": <Date Object>,
-  "post_message": <String of message/story>,
-  "post_reactions": [
+  "pageid": [
     {
-      "id": <reaction_id>,
-      "name": <Name of who reacted>,
-      "type": <LIKE, LOVE, ...>
-    },
-    {
-      "id": <reaction_id>,
-      "name": <Name of who reacted>,
-      "type": <LIKE, LOVE, ...>
-    },
-    {
-      "id": <reaction_id>,
-      "name": <Name of who reacted>,
-      "type": <LIKE, LOVE, ...>
-    },
-  ],
-  "post_comment_total": <Number of Comments>
+      "post_id": <post_id>,
+      "date_posted": <Date Object>,
+      "post_message": <String of message/story>,
+      "post_reactions": [
+        {
+          "id": <reaction_id>,
+          "name": <Name of who reacted>,
+          "type": <LIKE, LOVE, ...>
+        },
+        {
+          "id": <reaction_id>,
+          "name": <Name of who reacted>,
+          "type": <LIKE, LOVE, ...>
+        },
+        {
+          "id": <reaction_id>,
+          "name": <Name of who reacted>,
+          "type": <LIKE, LOVE, ...>
+        },
+      ],
+      "post_comment_total": <Number of Comments>
+    }
+  ]
 }
 ~~~
 
@@ -65,6 +69,7 @@ You can use the following parameters to filter the query:
 Use an ampersand (&) to use multiple parameters
 
 Sample URL with parameters: `cs129-server.iandelacruz.me/meta/19440638720?since=1477958400&until=1479112780`
+Sample URL with parameters for MULTIPLE PAGES: `cs129-server.iandelacruz.me/meta/TopGearPh,CompSAteneo?since=1477958400&until=1479112780`
 
 ## Changelog
 ---
@@ -77,3 +82,13 @@ Sample URL with parameters: `cs129-server.iandelacruz.me/meta/19440638720?since=
   - `post_message`
   - `post_comment_total`
 - Refactored code for modularization
+
+`3 Dec 2016`
+- Added a simple map-reduce function that counts the how many of each reactions there is to a specific post`
+- You can now use the nickname, instead of the id, for querying
+  - Example: You can use `CompSAteneo` for searching posts of CompSAt
+  - This is the end of the URL of CompSAt
+
+`4 Dec 2016`
+- `meta` endpoint now handles multiple objects
+- Updated return value for meta endpoint to support the multiple pages
