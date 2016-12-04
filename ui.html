@@ -20,17 +20,16 @@
 			function getResults() {
 				var startDate = moment($("#startdate").val()).unix().toString();
 				var endDate = moment($("#enddate").val()).unix().toString();
-				alert(startDate + " " + endDate)
-				alert($("#startdate").val());
+	
 				
 				
 				$.ajax({
 					type: "GET",
-					url: "http://cs129-server.iandelacruz.me/meta/110345575679186?since="+ startDate +"&until=" + endDate,
+					url: "http://cs129-server.iandelacruz.me/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA?since="+ startDate +"&until=" + endDate,
 					data: "",
 					dataType: "json",
 					contentType: "application/json; charset=utf-8",
-					async: false,
+					async: true,
 					success: OnSuccess,
 					error: OnError
 				});
@@ -38,7 +37,7 @@
 				function OnSuccess(data) {
 					
 					$.each(data, function (key, value){
-					var reactionsTotal =  Object.keys(value.post_reactions).length;
+					<!-- var reactionsTotal =  Object.keys(value.post_reactions).length; -->
 					var dates = new Date(value.date_posted);
 					var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
 					$("#resultsList").append("<a href='#' class='list-group-item'>" +
@@ -51,9 +50,9 @@
 							"<br>" +
 							"<label>" + value.post_message + "</label>" +
 							"<br>" +
-							"<h6 >" + reactionsTotal + "</h6>" +
+							"<h6 >" + "Total Reactions: 30" + "</h6>" +
 							"<p>" +
-							"<h6>" + value.post_comment_total + "</h6>" +
+							"<h6> Total Comments: " + value.post_comment_total + "</h6>" +
 						"</div>" +
 					"</a>"
 					
@@ -69,7 +68,6 @@
 	</head>
 	
 	<body>
-		<h1>Testing Website</h1>
 		<div class="panel panel-default panel-primary">
 			<div>
 				<div class="panel-body">
