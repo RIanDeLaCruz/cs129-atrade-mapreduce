@@ -44,9 +44,6 @@ const server = http.createServer(function serverCallback (req, res) {
   if(path.indexOf('comments') > 0) {
     commentsController(res, path, uri);
   }
-  if(path.indexOf('search') > 0) {
-    queryController(res, path, uri);
-  }
 });
 
 server.listen(port, hostname, function listenCallback() {
