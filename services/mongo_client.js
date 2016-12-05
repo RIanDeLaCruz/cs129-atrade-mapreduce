@@ -81,7 +81,9 @@ const insertDocuments = function(documentsArray, objectId, queryTerm) {
   })
   .catch(err => {
     console.log(`${err}: Insert Error`)
-    return Promise.reject(err)
+    let emptyArr = [];
+    return Promise.resolve(emptyArr)
+    //return Promise.reject(err)
   })
   //return MongoClient.connect(url)
   //.then(db => {
@@ -135,6 +137,11 @@ const queryDatabase = function(objectId, queryTerm) {
     console.log(`${err}: Query Error`)
     return Promise.reject(err)
   })
+}
+
+// Search query term
+const filterQuery = function(term){
+	db.collection.find({"post_message": /.*term.*/i});
 }
 
 module.exports = {
