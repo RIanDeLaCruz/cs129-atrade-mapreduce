@@ -139,6 +139,11 @@ const queryDatabase = function(objectId, queryTerm) {
   })
 }
 
+// Search query term
+const filterQuery = function(term){
+	db.collection.find({"post_message": /.*term.*/i});
+}
+
 module.exports = {
   insertDocuments: insertDocuments,
   mapReduceReactions: mapReduceReactions
