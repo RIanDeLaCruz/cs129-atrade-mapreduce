@@ -46,32 +46,49 @@
 				});
 
 				function OnSuccess(data) {
-					
+					var i = 0;
 					$.each(data, function (key, value){
-						$.each(value, function(Tkey, Tvalue){
-							var dates = new Date(Tvalue.date_posted);
-							var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
-							var reactionsTotal =  Object.keys(Tvalue.post_reactions).length;
-						
-							$("#resultsList").append("<a href='#' class='list-group-item'>" +
-								"<div>" +
-									"<h3 align='center'>" + "TITLE" +"</h3>" + 
-									"<p>" +
-									"<h4 align='center'>" + "PAGE NAME" + "</h4>" +
-									"<p>" +
-									"<h5 align='center'>" + parsedDate + "</h5>" +
-									"<br>" +
-									"<label>" + Tvalue.post_message + "</label>" +
-									"<br>" +
-									"<h6 >Total Reactions: "+ reactionsTotal + "</h6>" +
-									"<p>" +
-									"<h6> Total Comments: " + Tvalue.post_comment_total + "</h6>" +
-								"</div>" +
-							"</a>"
-							
-							)
+						var nickname = Object.keys(data)[i];
+						$.ajax({
+							type: "GET",
+							url: "http://cs129-server.iandelacruz.me/object/"+nickname,
+							data: "",
+							dataType: "json",
+							contentType: "application/json; charset=utf-8",
+							async: true,
+							success: OnSuccessT,
+							error: OnErrorT
 						});
-					
+						
+						function OnSuccessT(data){
+							var pageName = data.name;
+							$.each(value, function(Tkey, Tvalue){
+								var dates = new Date(Tvalue.date_posted);
+								var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
+								var reactionsTotal =  Object.keys(Tvalue.post_reactions).length;
+							
+								$("#resultsList").append("<a href='#' class='list-group-item'>" +
+									"<div>" +
+										"<h3 align='center'>" + pageName + "</h3>" +
+										"<p>" +
+										"<h5 align='center'>" + parsedDate + "</h5>" +
+										"<br>" +
+										"<label>" + Tvalue.post_message + "</label>" +
+										"<br>" +
+										"<h6 >Total Reactions: "+ reactionsTotal + "</h6>" +
+										"<p>" +
+										"<h6> Total Comments: " + Tvalue.post_comment_total + "</h6>" +
+									"</div>" +
+								"</a>"
+								
+								)
+							});
+						}
+						
+						function OnErrorT(data) {
+							alert("ERROR " + data.error);
+						}
+					i++;
 					});
 				}
 				
