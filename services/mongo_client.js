@@ -57,6 +57,7 @@ const insertDocuments = function(documentsArray, objectId, queryTerm) {
     safe: true
   }
   let searchCol = '';
+  let queriedArr = []
 
   return MongoClient.connect(url)
   .then(db => {
@@ -69,7 +70,7 @@ const insertDocuments = function(documentsArray, objectId, queryTerm) {
   })
   .then(foundCollections => {
     console.log(foundCollections)
-    let queriedArr = foundCollections.map(_documentMap)
+    queriedArr = foundCollections.map(_documentMap)
     return searchCol.bulkWrite(queriedArr, opts)
   })
   .then(bulkWriteReturn => {
@@ -77,7 +78,8 @@ const insertDocuments = function(documentsArray, objectId, queryTerm) {
   })
   .then(collectionData => {
     console.log(`${collectionData}: DATA`)
-    return Promise.resolve(collectionData)
+    //return Promise.resolve(collectionData)
+    return Promise.resolve(queriedArr)
   })
   .catch(err => {
     console.log(`${err}: Insert Error`)
@@ -141,7 +143,7 @@ const queryDatabase = function(objectId, queryTerm) {
 
 // Search query term
 const filterQuery = function(term){
-	db.collection.find({"post_message": /.*term.*/i});
+  db.collection.find({"post_message": /.*term.*/i});
 }
 
 module.exports = {
