@@ -19,7 +19,11 @@ const getFeed = fbGraph.getGroupFeed;
 
 const metaController = function(res, path, uri) {
   let feedResponse = '';
-  let groupId = path.split('/')[2];
+  let idsAndQuery = path.split('/')[2];
+  let groupId = idsAndQuery.split('&')[0];
+  let queryText = idsAndQuery.split('&')[1].split('=')[1];
+  console.log(groupId)
+  console.log(queryText)
   let ids = [];
 
   getFeed(groupId, uri.query)
@@ -31,7 +35,6 @@ const metaController = function(res, path, uri) {
     for(var keys in feedObject) {
       let feedData = feedObject[keys].data;
       let promiseData = _mapDataToReaction(feedData);
-      console.log(feedData)
       feedPromisesArray.push(
         _promiseAccumulator(
           promiseData.promiseArr,
@@ -59,7 +62,8 @@ const metaController = function(res, path, uri) {
         let commentSummary = postCommentsArray[i].map(_handleCommentsArray)
         let posts = _mergeTwoArrays(value[i], commentSummary)
         postsArray.push(posts);
-        insertPromiseArray.push(mongoInsert(posts, ids[i]))
+        //insertPromiseArray.push(mongoInsert(posts, ids[i]))
+        insertPromiseArray.push(mongoInsert(posts, ids[i], queryText))
       }
       return Promise.all(insertPromiseArray)
     })
@@ -70,7 +74,11 @@ const metaController = function(res, path, uri) {
         allPosts[ids[i]] = postsArray[i];
         returnObj[ids[i]] = r[i];
       }
-      res.end(JSON.stringify(allPosts))
+      //res.end(JSON.stringify(allPosts))
+      res.end(JSON.stringify(returnObj))
+    })
+    .catch(err => {
+      res.end(err)
     })
 
     //_promiseAccumulator(

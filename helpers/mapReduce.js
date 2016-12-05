@@ -13,7 +13,7 @@ const mapReactions = function() {
 
 const reduceReactions = function(keyObject, valuesArr) {
   var count = 0;
-  for(var i = 0; i < valuesArr.length - 1; i++ ) {
+  for(var i = 0; i < valuesArr.length; i++ ) {
     count += 1;
   }
   return count;
