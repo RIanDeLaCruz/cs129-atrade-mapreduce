@@ -50,17 +50,14 @@
                 return -1;
             }
             function getResults() {
+				$("#resultsList").empty();
                 var startDate = moment($("#startdate").val()).unix().toString();
                 var endDate = moment($("#enddate").val()).unix().toString();
 				var term = document.getElementById('queryText').value;
-				var limit = parseInt(document.getElementById('queryText').value, 10);
+				var limit = parseInt(document.getElementById('limit').value, 10);
 				var url;
-				if(term){
-					url = "http://localhost:8129/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA&search=" +
-							term+"?limit="+limit;
-				}else{
-					"http://localhost:8129/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA?limit="+limit;
-				}
+				url = "http://cs129-server.iandelacruz.me/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA&search=" +term+"?limit="+limit;
+				<!-- 	url = "http://cs129-server.iandelacruz.me/meta/CompSAteneo&search=" +term+"?limit="+limit; -->
  
                 $.ajax({
                     type: "GET",
@@ -77,8 +74,9 @@
                 function getTopPosts(data) {
                     var count = 1;
                     $("#resultsList").append("<h1>Top Posts</h1><div class=\"row\">");
-					
+					var i = 0;
                     $.each(data, function (key, value){
+					
 					var nickname = Object.keys(data)[i];
 						$.ajax({
 							type: "GET",
@@ -92,7 +90,9 @@
 						});
 						
 						function OnSuccessT(data){
+						
 							$.each(value, function(Tkey, Tvalue){
+								console.log(value.length)
 								var dates = new Date(Tvalue.date_posted);
 								var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
 								var reactionsTotal =  Object.keys(Tvalue.post_reactions).length;
@@ -129,6 +129,7 @@
 						function OnErrorT(data){
 							alert("ERROR " + data.error)
 						}
+						i++;
                     });
  
                     if (count % 3 != 0) {
