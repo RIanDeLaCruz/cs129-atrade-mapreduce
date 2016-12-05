@@ -28,6 +28,16 @@
 			var data = "";
 		});
 
+			// Number of Posts / Reactions / Comments
+			var dict = {}
+			dict["ateneochemistrysociety"] = [0,0,0];
+			dict["ateneoaeces"] = [0,0,0];
+			dict["AteneoMathematicsSociety"] = [0,0,0];
+			dict["AteneoBOx"] = [0,0,0];
+			dict["CompSAteneo"] = [0,0,0];
+			dict["AteneoLeaPs"] = [0,0,0];
+			dict["Ateneo.MISA"] = [0,0,0];
+
 			function getValueByKey(key, data) {
 				var i, len = data.length;
 
@@ -42,7 +52,6 @@
 			function getResults() {
 				var startDate = moment($("#startdate").val()).unix().toString();
 				var endDate = moment($("#enddate").val()).unix().toString();
-
 
 
 				$.ajax({
@@ -69,9 +78,7 @@
 
 							$("#resultsList").append(
 								"<div class=\"col-sm-4\"> <div class=\"post-body\">" +
-									"<h3 align='center'>" + "TITLE" +"</h3>" +
-									"<p>" +
-									"<h4 align='center'>" + "PAGE NAME" + "</h4>" +
+									"<h3 align='center'>" + key +"</h3>" +
 									"<p>" +
 									"<h5 align='center'>" + parsedDate + "</h5>" +
 									"<br> <div class=\"post-content\">" +
@@ -82,6 +89,12 @@
 									"<h6> Total Comments: " + Tvalue.post_comment_total + "</h6>" +
 								"</div></div>"
 							)
+
+							dict[key][0] += 1;
+							dict[key][1] += reactionsTotal;
+							dict[key][2] += Tvalue.post_comment_total;
+
+
 							if (count % 3 == 0) {
 								$("#resultsList").append("</div><div class=\"row\">");
 							}
@@ -112,14 +125,13 @@
 					    data: {
 					        // iris data from R
 					        columns: [
-					            ['ACheS', 10],
-					            ['AECES', 10],
-								['AMS', 10],
-								['BOx', 10],
-								['CompSAt', 20],
-								['LeaPs', 10],
-								['MISA', 10],
-								['Psyche', 10],
+					            ['ACheS', dict["ateneochemistrysociety"][0]],
+					            ['AECES', dict["ateneoaeces"][0]],
+								['AMS', dict["AteneoMathematicsSociety"][0]],
+								['BOx', dict["AteneoBOx"][0]],
+								['CompSAt', dict["CompSAteneo"][0]],
+								['LeaPs', dict["AteneoLeaPs"][0]],
+								['MISA', dict["Ateneo.MISA"][0]]
 					        ],
 					        type : 'pie',
 					        onclick: function (d, i) { console.log("onclick", d, i); },
@@ -134,8 +146,20 @@
 						data: {
 						   columns: [
 							   // ACheS, AECES, AMS, BOx, CompSAt, LeaPs, MISA and Psyche
-							   ['Reactions', 30, 200, 200, 400, 150, 250, 90, 100],
-							   ['Comments', 130, 100, 100, 200, 150, 50, 70, 80],
+							   ['Reactions', dict["ateneochemistrysociety"][1],
+							   				 dict["ateneoaeces"][1],
+											 dict["AteneoMathematicsSociety"][1],
+											 dict["AteneoBOx"][1],
+											 dict["CompSAteneo"][1],
+											 dict["AteneoLeaPs"][1],
+											 dict["Ateneo.MISA"][1]],
+							   ['Comments', dict["ateneochemistrysociety"][2],
+							   				 dict["ateneoaeces"][2],
+											 dict["AteneoMathematicsSociety"][2],
+											 dict["AteneoBOx"][2],
+											 dict["CompSAteneo"][2],
+											 dict["AteneoLeaPs"][2],
+											 dict["Ateneo.MISA"][2]]
 						   ],
 						   type: 'bar',
 						   groups: [
