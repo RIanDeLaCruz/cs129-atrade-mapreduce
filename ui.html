@@ -1,54 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-
-	<head>
-		<meta charset="UTF-8">
-		<link href="bootstrap.min.css" rel=stylesheet> 
-		<link href="bootstrap.min.js" rel=stylesheet>
-		 
-		
-		<title>Top 10 Org Posts</title>
-		
-		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-		
-		<script src="moment.js"></script>
-		<script language="javascript" type="text/javascript">
-		$( document ).ready(function() {
-			<!-- var today = moment().format('MM/DD/YYYY hh:mm:ss'); -->
-			<!-- document.getElementById("startdate").value = today;  -->
-		});
-			function getValueByKey(key, data) {
-				var i, len = data.length;
-				
-				for (i = 0; i < len; i++) {
-					if (data[i] && data[i].hasOwnProperty(key)) {
-						return data[i][key];
-					}
+ 
+    <head>
+        <meta charset="UTF-8">
+        <link href="bootstrap.min.css" rel=stylesheet>
+        <link href="style.css" rel=stylesheet>
+ 
+ 
+        <title>COA: STC Post Retriever</title>
+ 
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <!-- Load d3.js and c3.js -->
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="c3/c3.js" charset="utf-8"></script>
+ 
+        <!-- Load c3.css -->
+        <link href="c3/c3.css" rel="stylesheet" type="text/css">
+ 
+        <script src="moment.js"></script>
+        <script src="bootstrap.min.js"></script>
+ 
+ 
+        <script language="javascript" type="text/javascript">
+        $( document ).ready(function() {
+            <!-- var today = moment().format('MM/DD/YYYY hh:mm:ss'); -->
+            <!-- document.getElementById("startdate").value = today;  -->
+            var data = "";
+        });
+ 
+            // Number of Posts / Reactions / Comments
+            var dict = {}
+            dict["ateneochemistrysociety"] = [0,0,0];
+            dict["ateneoaeces"] = [0,0,0];
+            dict["AteneoMathematicsSociety"] = [0,0,0];
+            dict["AteneoBOx"] = [0,0,0];
+            dict["CompSAteneo"] = [0,0,0];
+            dict["AteneoLeaPs"] = [0,0,0];
+            dict["Ateneo.MISA"] = [0,0,0];
+ 
+            function getValueByKey(key, data) {
+                var i, len = data.length;
+ 
+                for (i = 0; i < len; i++) {
+                    if (data[i] && data[i].hasOwnProperty(key)) {
+                        return data[i][key];
+                    }
+                }
+ 
+                return -1;
+            }
+            function getResults() {
+                var startDate = moment($("#startdate").val()).unix().toString();
+                var endDate = moment($("#enddate").val()).unix().toString();
+				var term = document.getElementById('queryText').value;
+				var limit = parseInt(document.getElementById('queryText').value, 10);
+				var url;
+				if(term){
+					url = "http://localhost:8129/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA&search=" +
+							term+"?limit="+limit;
+				}else{
+					"http://localhost:8129/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA?limit="+limit;
 				}
-				
-				return -1;
-			}
-			function getResults() {
-				var startDate = moment($("#startdate").val()).unix().toString();
-				var endDate = moment($("#enddate").val()).unix().toString();
-	
-				
-				
-				$.ajax({
-					type: "GET",
-					url: "http://cs129-server.iandelacruz.me/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA",
-					data: "",
-					dataType: "json",
-					contentType: "application/json; charset=utf-8",
-					async: true,
-					success: OnSuccess,
-					error: OnError
-				});
-
-				function OnSuccess(data) {
-					var i = 0;
-					$.each(data, function (key, value){
-						var nickname = Object.keys(data)[i];
+ 
+                $.ajax({
+                    type: "GET",
+                    //url: "http://localhost:8129/meta/ateneochemistrysociety,ateneoaeces,AteneoMathematicsSociety,AteneoBOx,CompSAteneo,AteneoLeaPs,Ateneo.MISA?limit=2",
+                    url: url,
+                    data: "",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    async: true,
+                    success: OnSuccess,
+                    error: OnError
+                });
+ 
+                function getTopPosts(data) {
+                    var count = 1;
+                    $("#resultsList").append("<h1>Top Posts</h1><div class=\"row\">");
+					
+                    $.each(data, function (key, value){
+					var nickname = Object.keys(data)[i];
 						$.ajax({
 							type: "GET",
 							url: "http://cs129-server.iandelacruz.me/object/"+nickname,
@@ -61,77 +92,198 @@
 						});
 						
 						function OnSuccessT(data){
-							var pageName = data.name;
 							$.each(value, function(Tkey, Tvalue){
 								var dates = new Date(Tvalue.date_posted);
 								var parsedDate = dates.toDateString() + ", " + dates.toLocaleTimeString();
 								var reactionsTotal =  Object.keys(Tvalue.post_reactions).length;
-							
-								$("#resultsList").append("<a href='#' class='list-group-item'>" +
-									"<div>" +
-										"<h3 align='center'>" + pageName + "</h3>" +
+	 
+								$("#resultsList").append(
+									"<div class=\"col-sm-4\"> <div class=\"post-body\">" +
+										"<h3 align='center'>" + data.name +"</h3>" +
 										"<p>" +
 										"<h5 align='center'>" + parsedDate + "</h5>" +
-										"<br>" +
-										"<label>" + Tvalue.post_message + "</label>" +
-										"<br>" +
+										"<br> <div class=\"post-content\">" +
+										Tvalue.post_message +
+										"</div><br>" +
 										"<h6 >Total Reactions: "+ reactionsTotal + "</h6>" +
 										"<p>" +
 										"<h6> Total Comments: " + Tvalue.post_comment_total + "</h6>" +
-									"</div>" +
-								"</a>"
-								
+									"</div></div>"
 								)
+	 
+								dict[key][0] += 1;
+								dict[key][1] += reactionsTotal;
+								dict[key][2] += Tvalue.post_comment_total;
+	 
+	 
+								if (count % 3 == 0) {
+									$("#resultsList").append("</div><div class=\"row\">");
+								}
+	 
+								count++;
+	 
+	 
 							});
 						}
 						
-						function OnErrorT(data) {
-							alert("ERROR " + data.error);
+						function OnErrorT(data){
+							alert("ERROR " + data.error)
 						}
-					i++;
-					});
-				}
-				
-				function OnError(data) {
-					alert("ERROR " + data.error);
-				}
-			}
-		</script>
-
-	</head>
-	
-	<body>
-		<div class="panel panel-default panel-primary">
-			<div>
-				<div class="panel-body">
-				<div class="form-group">
-					<label for="queryText">Looking for:</label>
-					<input type="text" id="queryText" class="form-control" placeholder="Enter keywords"></input>
-					<br>
-					<label for="startdate">Start Date: </label>
-					<input type="datetime-local" id="startdate"></input>
-					
-					<br>
-					<label for="enddate">End Date: </label>
-					<input type="datetime-local" id="enddate"></input>
-				</div>
-				<p>
-				<div class="container" style="text-align:center;">
-					<button type="button" onclick="getResults()" class="btn btn-primary" align="center" >Search For Top 10 Results</button>
-				</div>
-			</div>
-		</div>
-		
-		</div>
-		
-		<div class="list-group" id="resultsList">
-			<a href="#" class="list-group-item">
-				
-			</a>
-			
-		</div>
-	</body>
-
-
-
+                    });
+ 
+                    if (count % 3 != 0) {
+                        /*
+                        while (count % 3 != 0) {
+                            $("#resultsList").append("<div class=\"col-sm-4\"><p></p></div>");
+                            count++;
+                        }*/
+                        $("#resultsList").append("</div>");
+ 
+                    }
+                }
+ 
+                function visualize(data) {
+                    $("#viz").prepend("<h1>Data Visualization</h1>");
+ 
+                    var chart = c3.generate({
+                        bindto: '#chart1',
+                        data: {
+                            // iris data from R
+                            columns: [
+                                ['ACheS', dict["ateneochemistrysociety"][0]],
+                                ['AECES', dict["ateneoaeces"][0]],
+                                ['AMS', dict["AteneoMathematicsSociety"][0]],
+                                ['BOx', dict["AteneoBOx"][0]],
+                                ['CompSAt', dict["CompSAteneo"][0]],
+                                ['LeaPs', dict["AteneoLeaPs"][0]],
+                                ['MISA', dict["Ateneo.MISA"][0]]
+                            ],
+                            type : 'pie',
+                            onclick: function (d, i) { console.log("onclick", d, i); },
+                            onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+                            onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+                        }
+                    });
+ 
+ 
+                    var barChart = c3.generate ({
+                        bindto: '#chart2',
+                        data: {
+                           columns: [
+                               // ACheS, AECES, AMS, BOx, CompSAt, LeaPs, MISA and Psyche
+                               ['Reactions', dict["ateneochemistrysociety"][1],
+                                             dict["ateneoaeces"][1],
+                                             dict["AteneoMathematicsSociety"][1],
+                                             dict["AteneoBOx"][1],
+                                             dict["CompSAteneo"][1],
+                                             dict["AteneoLeaPs"][1],
+                                             dict["Ateneo.MISA"][1]],
+                               ['Comments', dict["ateneochemistrysociety"][2],
+                                             dict["ateneoaeces"][2],
+                                             dict["AteneoMathematicsSociety"][2],
+                                             dict["AteneoBOx"][2],
+                                             dict["CompSAteneo"][2],
+                                             dict["AteneoLeaPs"][2],
+                                             dict["Ateneo.MISA"][2]]
+                           ],
+                           type: 'bar',
+                           groups: [
+                               ['data1', 'data2']
+                           ]
+                       },
+                       axis: {
+                            y: {
+                                label: 'Score'
+                            },
+                            x: {
+                                label: 'Organization',
+                                tick: {
+                                    format: function (d) {
+                                        var orgs = ["ACheS", "AECES", "AMS", "BOx", "CompSAt", "LeaPs", "MISA", "Psyche"];
+                                        return orgs[d];
+                                    }
+                                }
+                            }
+                        },
+                       grid: {
+                           y: {
+                               lines: [{value:0}]
+                           }
+                       }
+ 
+                    });
+ 
+ 
+                    setTimeout(function () {
+                       barChart.groups([['Reactions', 'Comments']])
+                    }, 1000);
+                }
+ 
+                function OnSuccess(data) {
+                    // Top Posts
+                    getTopPosts(data);
+ 
+                    // Viz
+                    visualize (data);
+ 
+                }
+ 
+                function OnError(data) {
+                    alert("ERROR " + data.error);
+                }
+            }
+        </script>
+ 
+    </head>
+ 
+    <body>
+        <div class="sleepy">
+            <h1>COA: STC Post Retriever</h1>
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="content">
+ 
+                    <center><img src="logo.png" width=100 height=100></center>
+                    <div class="post-content">
+                        A search engine that retrieves posts from the Facebook pages of organizations belonging to the Science and Technology Cluster: ACheS, AECES, AMS, BOx, CompSAt, LeaPs, MISA and Psyche. <br><br>
+ 
+                        <B>How it Works</b><br>
+                        Fill in the parameters on the right hand side and click on the Search button. The web application will go through the aforementioned STC Facebook pages and retrieve posts containing the keyword you entered. It will then display the ten most popular posts based on the number of reactions and comments. Graphs will also be presented in order to visualize information regarding the retrieved results.
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-7">
+                <div class="content" >
+                        <div class="form-group">
+                            <label for="queryText">Search Query</label>
+                            <input type="text" class="form-control" id="queryText"  placeholder="eg. Tutorials, Tambay Week">
+                        </div>
+ 
+                        <div class="form-group">
+                            <label for="limit">Limit of Posts</label>
+                            <input type="number" class="form-control" id="limit" min="1" step="1"/>
+                        </div>
+ 
+                        
+                        <button type="button" onclick="getResults()" class="btn btn-default btn-lg" align="center" >Search</button>
+                </div>
+            </div>
+ 
+        </div> <!--row-->
+ 
+        <div id="resultsList">
+ 
+        </div>
+ 
+ 
+        <div id="viz" class="col-md-12">
+                <div id="chart1"></div>
+                <div id="chart2"></div>
+        </div>
+ 
+    </div> <!--sleepy-->
+    </body>
+ 
+ 
+ 
 </html>

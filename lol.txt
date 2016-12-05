@@ -21,7 +21,8 @@
 				function OnError(data) {
 					alert("ERROR " + data.error);
 				}
-			var url = "http://cs129-server.iandelacruz.me/feed/332204390194276?since=1477958400&until=1479112780"
+			var url = "
+			://cs129-server.iandelacruz.me/feed/332204390194276?since=1477958400&until=1479112780"
 			var getResults = function(){
 				var xhr = new XMLHttpRequest();
 				xhr.open("GET", url);
@@ -58,3 +59,25 @@ function getReactions(int n, string jsonstring){
 	else
 		jsonstring += page.get() + getReactions(n+1, jsonstring)
 }
+\
+
+
+
+
+
+
+
+
+var nickname = Object.keys(data)[i];
+						$.ajax({
+							type: "GET",
+							url: "http://cs129-server.iandelacruz.me/object/"+nickname,
+							data: "",
+							dataType: "json",
+							contentType: "application/json; charset=utf-8",
+							async: true,
+							success: OnSuccessT,
+							error: OnErrorT
+						});
+						
+						function OnSuccessT(data){
