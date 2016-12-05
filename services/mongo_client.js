@@ -48,36 +48,53 @@ const _documentMap = function(curr, ndx, arr) {
  * @param {Array} documentsArray - array of documents to be inserted
  *
  */
-const insertDocuments = function(documentsArray, objectId) {
+//const insertDocuments = function(documentsArray, objectId) {
+const insertDocuments = function(documentsArray, objectId, queryTerm) {
   let ops = documentsArray.map(_documentMap);
   let opts = {
     ordered: true,
     w: 1,
     safe: true
   }
+  let searchCol = '';
+  let queriedArr = []
+  let found = []
 
   return MongoClient.connect(url)
   .then(db => {
     let col = db.collection(`_${objectId}`);
+    searchCol = db.collection(`_${objectId}.queried`);
     return col.bulkWrite(ops, opts)
   })
   .then(results => {
+    return queryDatabase(objectId, queryTerm)
+  })
+  .then(foundCollections => {
+    console.log(foundCollections)
+    found = foundCollections
+    queriedArr = foundCollections.map(_documentMap)
+    return searchCol.bulkWrite(queriedArr, opts)
+  })
+  .then(bulkWriteReturn => {
     return mapReduceReactions(objectId)
   })
   .then(collectionData => {
-    return Promise.resolve(collectionData)
+    console.log(`${collectionData}: DATA`)
+    //return Promise.resolve(collectionData)
+    return Promise.resolve(found)
   })
   .catch(err => {
-    return Promise.reject(err)
+    console.log(`${err}: Insert Error`)
+    let emptyArr = [];
+    return Promise.resolve(emptyArr)
+    //return Promise.reject(err)
   })
   //return MongoClient.connect(url)
   //.then(db => {
     //let col = db.collection(`_${objectId}`);
     //return col.bulkWrite(ops, opts)
-  //})
-  //.then(results => {
-    //return Promise.resolve(ops)
-  //})
+  //}) //.then(results => {
+    //return Promise.resolve(ops) //})
   //.catch(err => {
     //return Promise.reject(err)
   //})
@@ -96,7 +113,7 @@ const mapReduceReactions = function(objectId) {
   }
   return MongoClient.connect(url)
   .then(db => {
-    let col = db.collection(`_${objectId}`);
+    let col = db.collection(`_${objectId}.queried`);
     return col.mapReduce(reactionsMap, reactionsReduce, opts)
   })
   .then(outCollection => {
@@ -106,9 +123,29 @@ const mapReduceReactions = function(objectId) {
     return Promise.resolve(data.toArray())
   })
   .catch(err => {
+    console.log(`${err}: Map Reduce Error`)
     return Promise.reject(err)
-    console.log(err)
   })
+}
+
+const queryDatabase = function(objectId, queryTerm) {
+  return MongoClient.connect(url)
+  .then(db => {
+    let col = db.collection(`_${objectId}`);
+    return col.find({"post_message": new RegExp(queryTerm) }).toArray()
+  })
+  .then(documents => {
+    return Promise.resolve(documents)
+  })
+  .catch(err => {
+    console.log(`${err}: Query Error`)
+    return Promise.reject(err)
+  })
+}
+
+// Search query term
+const filterQuery = function(term){
+  db.collection.find({"post_message": /.*term.*/i});
 }
 
 module.exports = {

@@ -10,6 +10,7 @@ const feedController = require('./controllers/feedController.js');
 const reactionsController = require('./controllers/reactionsController.js');
 const metaController = require('./controllers/metaController.js');
 const commentsController = require('./controllers/commentsController.js');
+const queryController = require('./controllers/searchController.js');
 
 /* Define constant values */
 const hostname = '127.0.0.1';
@@ -35,7 +36,7 @@ const server = http.createServer(function serverCallback (req, res) {
     feedController(res, path, uri);
   }
   if(path.indexOf('reactions') > 0) {
-    feedController(res, path, uri);
+    reactionsController(res, path, uri);
   }
   if(path.indexOf('meta') > 0 ) {
     metaController(res, path, uri)
