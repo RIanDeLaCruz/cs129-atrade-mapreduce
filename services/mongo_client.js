@@ -81,7 +81,9 @@ const insertDocuments = function(documentsArray, objectId, queryTerm) {
   })
   .catch(err => {
     console.log(`${err}: Insert Error`)
-    return Promise.reject(err)
+    let emptyArr = [];
+    return Promise.resolve(emptyArr)
+    //return Promise.reject(err)
   })
   //return MongoClient.connect(url)
   //.then(db => {
